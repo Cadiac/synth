@@ -1,4 +1,4 @@
-function getFrequency(note: String) {
+function getFrequency(note: String, baseOctave: number) {
   const baseFrequency = 440; // A4
   const noteNames: { [key: string]: number } = {
     C: -9,
@@ -17,15 +17,18 @@ function getFrequency(note: String) {
 
   const octave = parseInt(note[note.length - 1]);
   const noteName = note.slice(0, -1);
-  const n = noteNames[noteName] + (octave - 4) * 12;
+  const n = noteNames[noteName] + (baseOctave - 4 + octave - 4) * 12;
   return baseFrequency * Math.pow(2, n / 12);
 }
 
 type Synth = {
   audioContext: AudioContext;
-  oscillators: OscillatorNode[];
-  waveform: OscillatorType;
-  detune: number;
+  oscillators: {
+    osc: OscillatorNode;
+    gain: GainNode;
+    octave: number;
+    volume: number;
+  }[];
   volume: {
     gainNode: GainNode;
   };
@@ -43,8 +46,6 @@ type Synth = {
   echo: {
     delayNode: DelayNode;
     feedbackGainNode: GainNode;
-    delay: number;
-    feedback: number;
   };
 };
 
@@ -81,14 +82,20 @@ function initializeSynth() {
   lowpassFilterNode.frequency.value = (0.5 * audioContext.sampleRate) / 2;
   lowpassFilterNode.Q.value = 15;
 
+  // Delay
+  delayNode.delayTime.value = 0.1;
+  delayFeedbackGainNode.gain.value = 0.5;
+
   synth = {
     audioContext,
     volume: {
       gainNode: volumeNode,
     },
-    oscillators: [],
-    waveform: "sawtooth",
-    detune: 10,
+    oscillators: [
+      createOscillator(audioContext, 4, adsrGainNode),
+      createOscillator(audioContext, 4, adsrGainNode),
+      createOscillator(audioContext, 4, adsrGainNode),
+    ],
     lowpass: {
       filterNode: lowpassFilterNode,
     },
@@ -103,31 +110,43 @@ function initializeSynth() {
     echo: {
       delayNode,
       feedbackGainNode: delayFeedbackGainNode,
-      delay: 0.1,
-      feedback: 0.5,
     },
   };
 }
 
-function createOscillator(frequency: number, detune: number) {
-  const oscillator = synth.audioContext.createOscillator();
-  oscillator.type = synth.waveform;
-  oscillator.frequency.value = frequency;
-  oscillator.detune.value = detune;
+function createOscillator(
+  audioContext: AudioContext,
+  octave: number,
+  destination: AudioNode
+) {
+  const oscillator = new OscillatorNode(audioContext);
+  oscillator.type = "sawtooth";
+  oscillator.frequency.value = 440 * Math.pow(2, octave - 4); // A
+  oscillator.detune.value = 0;
 
-  oscillator.connect(synth.adsr.gainNode);
+  const gainNode = new GainNode(audioContext);
+  const volume = 0.5;
+  gainNode.gain.value = volume;
+
+  // OSC -> Gain -> Destination
+  oscillator.connect(gainNode);
+  gainNode.connect(destination);
 
   oscillator.start();
 
-  return oscillator;
+  return {
+    osc: oscillator,
+    gain: gainNode,
+    octave,
+    volume,
+  };
 }
 
-function playNote(note: string) {
+function startNote(note: string) {
   if (!synth) {
     initializeSynth();
   }
 
-  synth.oscillators.forEach((osc) => osc.stop());
   synth.adsr.gainNode.gain.cancelScheduledValues(
     synth.audioContext.currentTime
   );
@@ -135,11 +154,12 @@ function playNote(note: string) {
     synth.audioContext.currentTime
   );
 
-  const frequency = getFrequency(note);
-
-  synth.oscillators[0] = createOscillator(frequency, 0);
-  synth.oscillators[1] = createOscillator(frequency, synth.detune);
-  synth.oscillators[2] = createOscillator(frequency, -synth.detune);
+  synth.oscillators.forEach((oscillator) => {
+    oscillator.osc.frequency.setValueAtTime(
+      getFrequency(note, oscillator.octave),
+      synth.audioContext.currentTime
+    );
+  });
 
   const attackEnd =
     synth.audioContext.currentTime + synth.adsr.attack * synth.adsr.maxDuration;
@@ -151,12 +171,6 @@ function playNote(note: string) {
     synth.adsr.sustain,
     attackEnd,
     decayDuration
-  );
-
-  synth.echo.delayNode.delayTime.value = synth.echo.delay;
-  synth.echo.feedbackGainNode.gain.setValueAtTime(
-    synth.echo.feedback,
-    synth.audioContext.currentTime
   );
 }
 
@@ -176,19 +190,46 @@ function stopNote() {
     synth.audioContext.currentTime
   );
   synth.adsr.gainNode.gain.linearRampToValueAtTime(0, releaseEnd);
-
-  synth.oscillators.forEach((osc) => osc.stop(releaseEnd));
 }
 
-function setVolume(volume: string) {
+// Controls
+
+function setMasterVolume(volume: string) {
   if (!synth) initializeSynth();
   synth.volume.gainNode.gain.value = Number(volume);
 }
 
-function setDetune(detune: string) {
+// Oscillators
+
+function setOscillatorVolume(volume: string, oscillator: number) {
   if (!synth) initializeSynth();
-  synth.detune = Number(detune);
+  synth.oscillators[oscillator].gain.gain.value = Number(volume);
 }
+
+function setOscillatorDetune(detune: string, oscillator: number) {
+  if (!synth) initializeSynth();
+  synth.oscillators[oscillator].osc.detune.value = Number(detune);
+}
+
+function setOscillatorWaveform(waveform: string, oscillator: number) {
+  if (!synth) initializeSynth();
+
+  const waveforms: OscillatorType[] = [
+    "sine",
+    "square",
+    "sawtooth",
+    "triangle",
+  ];
+
+  synth.oscillators[oscillator].osc.type = waveforms[Number(waveform)];
+}
+
+function setOscillatorOctave(octave: string, oscillator: number) {
+  if (!synth) initializeSynth();
+  synth.oscillators[oscillator].octave = Number(octave);
+}
+
+// Lowpass filter
 
 function setLowpassFrequency(frequency: string) {
   if (!synth) initializeSynth();
@@ -200,6 +241,8 @@ function setLowpassQ(q: string) {
   if (!synth) initializeSynth();
   synth.lowpass.filterNode.Q.value = Number(q) * 30;
 }
+
+// ADSR
 
 function setAdsrAttack(attack: string) {
   if (!synth) initializeSynth();
@@ -221,25 +264,17 @@ function setAdsrRelease(release: string) {
   synth.adsr.release = Number(release);
 }
 
+// Echo
+
 function setEchoDelay(time: string) {
   if (!synth) initializeSynth();
-  synth.echo.delay = Number(time);
+  synth.echo.delayNode.delayTime.value = Number(time);
 }
 
 function setEchoFeedback(feedback: string) {
   if (!synth) initializeSynth();
-  synth.echo.feedback = Number(feedback);
-}
-
-function setWaveform(waveform: string) {
-  if (!synth) initializeSynth();
-
-  const waveforms: OscillatorType[] = [
-    "sine",
-    "square",
-    "sawtooth",
-    "triangle",
-  ];
-
-  synth.waveform = waveforms[Number(waveform)];
+  synth.echo.feedbackGainNode.gain.setValueAtTime(
+    Number(feedback),
+    synth.audioContext.currentTime
+  );
 }

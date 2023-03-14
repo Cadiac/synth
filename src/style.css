@@ -117,11 +117,6 @@ button:focus-visible {
   margin-top: 2em;
 }
 
-.column {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
 
 .controls-container {
   display: flex;
@@ -138,7 +133,7 @@ input[type="range" i] {
   width: 161px;
   padding-top: 1em;
   padding-bottom: 1em;
-  margin: 1em 0;
+  margin: 1em 0 0 0;
   height: 10px;
   border: none;
   -webkit-appearance: none;
@@ -172,13 +167,36 @@ input[type="range" i]::-webkit-slider-thumb {
   justify-content: space-between;
 }
 
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+
 .waveform-input {
   background-size: 31% 100% !important;
-  margin-bottom: 0 !important;
   background-position: 5% 0% !important;
 }
 
 small {
   font-weight: bold;
   color: #f9f9f9;
+}
+
+small.left {
+  margin-left: -0.5em;
+}
+
+small.middle {
+  margin-left: -0.5em;
+}
+
+small.right {
+  margin-right: -0.5em;
 }

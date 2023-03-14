@@ -14,68 +14,223 @@
   <div id="app">
     <div class="keyboard">
       <div class="minor-keys">
-        <button class="key" onmousedown="playNote('C#4')" onmouseup="stopNote()">
+        <button class="key" onmousedown="startNote('C#4')" onmouseup="stopNote()">
           C#4
         </button>
-        <button class="key" onmousedown="playNote('D#4')" onmouseup="stopNote()">
+        <button class="key" onmousedown="startNote('D#4')" onmouseup="stopNote()">
           D#4
         </button>
         <div class="spacer-key"></div>
-        <button class="key" onmousedown="playNote('F#4')" onmouseup="stopNote()">
+        <button class="key" onmousedown="startNote('F#4')" onmouseup="stopNote()">
           F#4
         </button>
-        <button class="key" onmousedown="playNote('G#4')" onmouseup="stopNote()">
+        <button class="key" onmousedown="startNote('G#4')" onmouseup="stopNote()">
           G#4
         </button>
-        <button class="key" onmousedown="playNote('A#4')" onmouseup="stopNote()">
+        <button class="key" onmousedown="startNote('A#4')" onmouseup="stopNote()">
           A#4
+        </button>
+        <div class="spacer-key"></div>
+        <button class="key" onmousedown="startNote('C#5')" onmouseup="stopNote()">
+          C#5
+        </button>
+        <button class="key" onmousedown="startNote('D#5')" onmouseup="stopNote()">
+          D#5
+        </button>
+        <div class="spacer-key"></div>
+        <button class="key" onmousedown="startNote('F#5')" onmouseup="stopNote()">
+          F#5
+        </button>
+        <button class="key" onmousedown="startNote('G#5')" onmouseup="stopNote()">
+          G#5
+        </button>
+        <button class="key" onmousedown="startNote('A#5')" onmouseup="stopNote()">
+          A#5
         </button>
       </div>
       <div class="major-keys">
-        <button class="key" onmousedown="playNote('C4')" onmouseup="stopNote()">
+        <button class="key" onmousedown="startNote('C4')" onmouseup="stopNote()">
           C-4
         </button>
-        <button class="key" onmousedown="playNote('D4')" onmouseup="stopNote()">
+        <button class="key" onmousedown="startNote('D4')" onmouseup="stopNote()">
           D-4
         </button>
-        <button class="key" onmousedown="playNote('E4')" onmouseup="stopNote()">
+        <button class="key" onmousedown="startNote('E4')" onmouseup="stopNote()">
           E-4
         </button>
-        <button class="key" onmousedown="playNote('F4')" onmouseup="stopNote()">
+        <button class="key" onmousedown="startNote('F4')" onmouseup="stopNote()">
           F-4
         </button>
-        <button class="key" onmousedown="playNote('G4')" onmouseup="stopNote()">
+        <button class="key" onmousedown="startNote('G4')" onmouseup="stopNote()">
           G-4
         </button>
-        <button class="key" onmousedown="playNote('A4')" onmouseup="stopNote()">
+        <button class="key" onmousedown="startNote('A4')" onmouseup="stopNote()">
           A-4
         </button>
-        <button class="key" onmousedown="playNote('B4')" onmouseup="stopNote()">
+        <button class="key" onmousedown="startNote('B4')" onmouseup="stopNote()">
           B-4
+        </button>
+        <button class="key" onmousedown="startNote('C5')" onmouseup="stopNote()">
+          C-5
+        </button>
+        <button class="key" onmousedown="startNote('D5')" onmouseup="stopNote()">
+          D-5
+        </button>
+        <button class="key" onmousedown="startNote('E5')" onmouseup="stopNote()">
+          E-5
+        </button>
+        <button class="key" onmousedown="startNote('F5')" onmouseup="stopNote()">
+          F-5
+        </button>
+        <button class="key" onmousedown="startNote('G5')" onmouseup="stopNote()">
+          G-5
+        </button>
+        <button class="key" onmousedown="startNote('A5')" onmouseup="stopNote()">
+          A-5
+        </button>
+        <button class="key" onmousedown="startNote('B5')" onmouseup="stopNote()">
+          B-5
         </button>
       </div>
     </div>
     <div class="controls">
-      <div class="column">
-        <!-- Master -->
-        <div class="controls-container">
-          <label for="volume">VOL</label>
-          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" oninput="setVolume(this.value)" />
-        </div>
-
-        <!-- Oscillator -->
-        <div class="controls-container">
-          <label for="detune">DETUNE</label>
-          <input id="detune" type="range" min="0" max="30" step="1" value="15" oninput="setDetune(this.value)" />
-          <label for="detune">WAVEFORM</label>
-          <input class="waveform-input" id="detune" type="range" min="0" max="3" step="1" value="2" oninput="setWaveform(this.value)" />
-          <div class="space-between">
-            <small>SIN</small>
-            <small>SQR</small>
-            <small>SAW</small>
-            <small>TRI</small>
+      <!-- Oscillator bank -->
+      <div class="controls-container">
+        <label for="oscillator-1">OSCILLATOR-1</label>
+        <div id="oscillator-1" class="row">
+          <div class="column">
+            <label for="detune">RANGE</label>
+            <input id="detune" type="range" min="1" max="7" step="1" value="4"
+              oninput="setOscillatorOctave(this.value, 0)" />
+          </div>
+          <div class="column">
+            <label for="detune">DETUNE</label>
+            <input id="detune" type="range" min="0" max="30" step="1" value="15"
+              oninput="setOscillatorDetune(this.value, 0)" />
+              <div class="space-between">
+                <small class="left">-30</small>
+                <small class="middle">0</small>
+                <small class="right">30</small>
+              </div>
+          </div>
+          <div class="column">
+            <label for="detune">WAVEFORM</label>
+            <input class="waveform-input" id="detune" type="range" min="0" max="3" step="1" value="2"
+              oninput="setOscillatorWaveform(this.value, 0)" />
+            <div class="space-between">
+              <small>SIN</small>
+              <small>SQR</small>
+              <small>SAW</small>
+              <small>TRI</small>
+            </div>
           </div>
         </div>
+
+        <label for="oscillator-2">OSCILLATOR-2</label>
+        <div id="oscillator-2" class="row">
+          <div class="column">
+            <label for="detune">RANGE</label>
+            <input id="detune" type="range" min="1" max="7" step="1" value="4"
+              oninput="setOscillatorOctave(this.value, 1)" />
+          </div>
+          <div class="column">
+            <label for="detune">DETUNE</label>
+            <input id="detune" type="range" min="0" max="30" step="1" value="15"
+              oninput="setOscillatorDetune(this.value, 1)" />
+              <div class="space-between">
+                <small class="left">-30</small>
+                <small class="middle">0</small>
+                <small class="right">30</small>
+              </div>
+          </div>
+          <div class="column">
+            <label for="detune">WAVEFORM</label>
+            <input class="waveform-input" id="detune" type="range" min="0" max="3" step="1" value="2"
+              oninput="setOscillatorWaveform(this.value, 1)" />
+            <div class="space-between">
+              <small>SIN</small>
+              <small>SQR</small>
+              <small>SAW</small>
+              <small>TRI</small>
+            </div>
+          </div>
+        </div>
+
+        <label for="oscillator-3">OSCILLATOR-3</label>
+        <div id="oscillator-3" class="row">
+          <div class="column">
+            <label for="detune">RANGE</label>
+            <input id="detune" type="range" min="1" max="7" step="1" value="4"
+              oninput="setOscillatorOctave(this.value, 2)" />
+          </div>
+          <div class="column">
+            <label for="detune">DETUNE</label>
+            <input id="detune" type="range" min="-30" max="30" step="1" value="0"
+              oninput="setOscillatorDetune(this.value, 2)" />
+              <div class="space-between">
+                <small class="left">-30</small>
+                <small class="middle">0</small>
+                <small class="right">30</small>
+              </div>
+          </div>
+          <div class="column">
+            <label for="detune">WAVEFORM</label>
+            <input class="waveform-input" id="detune" type="range" min="0" max="3" step="1" value="2"
+              oninput="setOscillatorWaveform(this.value, 2)" />
+            <div class="space-between">
+              <small>SIN</small>
+              <small>SQR</small>
+              <small>SAW</small>
+              <small>TRI</small>
+            </div>
+          </div>
+
+        </div>
+        <h3>OSCILLATOR BANK</h3>
+      </div>
+
+      <!-- Oscillator bank -->
+      <div class="controls-container">
+        <label for="mixer-1">OSCILLATOR-1</label>
+        <div id="mixer-1" class="row">
+          <div class="column">
+            <label for="detune">VOLUME</label>
+            <input id="detune" type="range" min="0" max="1" step="0.01" value="0.5"
+              oninput="setOscillatorVolume(this.value, 0)" />
+            <div class="space-between">
+              <small>0</small>
+              <small>10</small>
+            </div>
+          </div>
+        </div>
+
+        <label for="mixer-2">OSCILLATOR-2</label>
+        <div id="mixer-2" class="row">
+          <div class="column">
+            <label for="detune">VOLUME</label>
+            <input id="detune" type="range" min="0" max="1" step="0.01" value="0.5"
+              oninput="setOscillatorVolume(this.value, 1)" />
+            <div class="space-between">
+              <small>0</small>
+              <small>10</small>
+            </div>
+          </div>
+        </div>
+
+        <label for="mixer-3">OSCILLATOR-1</label>
+        <div id="mixer-3" class="row">
+          <div class="column">
+            <label for="detune">VOLUME</label>
+            <input id="detune" type="range" min="0" max="1" step="0.01" value="0.5"
+              oninput="setOscillatorVolume(this.value, 2)" />
+            <div class="space-between">
+              <small>0</small>
+              <small>10</small>
+            </div>
+          </div>
+        </div>
+
+        <h3>MIXER</h3>
       </div>
 
       <div class="column">
@@ -113,6 +268,15 @@
           <label for="echo-feedback">FDBK</label>
           <input id="echo-feedback" type="range" min="0" max="1" step="0.01" value="0.5"
             oninput="setEchoFeedback(this.value)" />
+        </div>
+      </div>
+
+      <div class="column">
+        <!-- Master -->
+        <div class="controls-container">
+          <label for="volume">VOLUME</label>
+          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8"
+            oninput="setMasterVolume(this.value)" />
         </div>
       </div>
     </div>
