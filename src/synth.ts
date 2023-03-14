@@ -12,6 +12,10 @@ type Synth = {
     gain: GainNode;
     octave: number;
   }[];
+  modulator: {
+    osc: OscillatorNode;
+    gain: GainNode;
+  };
   volume: {
     gainNode: GainNode;
   };
@@ -60,14 +64,26 @@ function initializeSynth() {
   lowpassFilterNode.connect(volumeNode);
   volumeNode.connect(audioContext.destination);
 
+  const oscillators = [
+    createOscillator(audioContext, 4, adsrGainNode, true),
+    createOscillator(audioContext, 4, adsrGainNode, false),
+    createOscillator(audioContext, 4, adsrGainNode, false),
+  ];
+
+  const modulator = createModulator(
+    audioContext,
+    oscillators.map((o) => o.osc),
+    false
+  );
+
   // Master volume
   const volume = 0.8;
   volumeNode.gain.value = volume;
 
   // Lowpass filter
   lowpassFilterNode.type = "lowpass";
-  lowpassFilterNode.frequency.value = (0.5 * audioContext.sampleRate) / 2;
-  lowpassFilterNode.Q.value = 15;
+  lowpassFilterNode.frequency.value = (1.0 * audioContext.sampleRate) / 2;
+  lowpassFilterNode.Q.value = 0;
 
   // ADSR
   adsrGainNode.gain.value = 0.0;
@@ -82,11 +98,8 @@ function initializeSynth() {
     volume: {
       gainNode: volumeNode,
     },
-    oscillators: [
-      createOscillator(audioContext, 4, adsrGainNode, true),
-      createOscillator(audioContext, 4, adsrGainNode, false),
-      createOscillator(audioContext, 4, adsrGainNode, false),
-    ],
+    oscillators,
+    modulator,
     noise: createWhiteNoise(audioContext, adsrGainNode),
     lowpass: {
       filterNode: lowpassFilterNode,
@@ -132,6 +145,35 @@ function createOscillator(
     osc: oscillator,
     gain: gainNode,
     octave,
+  };
+}
+
+function createModulator(
+  audioContext: AudioContext,
+  destinations: OscillatorNode[],
+  enabled: boolean
+) {
+  const oscillator = audioContext.createOscillator();
+  oscillator.type = "sine";
+  oscillator.frequency.value = 5;
+
+  const gainNode = audioContext.createGain();
+  gainNode.gain.value = 5;
+
+  destinations.forEach((destination) =>
+    gainNode.connect(destination.frequency)
+  );
+
+  // OSC -> Gain -> Destination.frequency
+  if (enabled) {
+    oscillator.connect(gainNode);
+  }
+
+  oscillator.start();
+
+  return {
+    osc: oscillator,
+    gain: gainNode,
   };
 }
 
@@ -335,6 +377,27 @@ function toggleOscillator(enabled: boolean, oscillator: number) {
     );
   } else {
     synth.oscillators[oscillator].osc.disconnect();
+  }
+}
+
+// Oscillator modulation
+
+function setOscillatorModulationAmount(amount: string) {
+  if (!synth) initializeSynth();
+  synth.modulator.gain.gain.value = Number(amount);
+}
+
+function setOscillatorModulationFrq(frequency: string) {
+  if (!synth) initializeSynth();
+  synth.modulator.osc.frequency.value = Number(frequency);
+}
+
+function toggleOscillatorModulation(enabled: boolean) {
+  if (!synth) initializeSynth();
+  if (enabled) {
+    synth.modulator.osc.connect(synth.modulator.gain);
+  } else {
+    synth.modulator.osc.disconnect();
   }
 }
 

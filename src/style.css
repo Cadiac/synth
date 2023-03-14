@@ -193,6 +193,10 @@ input[type="range" i]::-webkit-slider-thumb {
   justify-content: flex-end;
 }
 
+.align-center {
+  align-items: center;
+}
+
 .align-self-end {
   align-self: flex-end;
 }
