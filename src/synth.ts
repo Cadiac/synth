@@ -27,13 +27,17 @@ type Synth = {
     osc: OscillatorNode;
     gain: GainNode;
     octave: number;
-    volume: number;
   }[];
   volume: {
     gainNode: GainNode;
   };
   lowpass: {
     filterNode: BiquadFilterNode;
+  };
+  noise: {
+    enabled: boolean;
+    generator: AudioBufferSourceNode;
+    gain: GainNode;
   };
   adsr: {
     gainNode: GainNode;
@@ -61,15 +65,14 @@ function initializeSynth() {
   const delayFeedbackGainNode = audioContext.createGain();
 
   // Connections:
-  // OSC -> ADSR -> Lowpass -> Volume -> Destination
-  //         l-> Delay -^
-  //              ^-> Feedback -> Delay
-
+  // OSC - -> ADSR - - - > Lowpass -> Volume -> Destination
+  // Noise -^  v                ^
+  //           Delay <-> Feedback
   adsrGainNode.connect(lowpassFilterNode);
   adsrGainNode.connect(delayNode);
-  delayNode.connect(lowpassFilterNode);
   delayNode.connect(delayFeedbackGainNode);
   delayFeedbackGainNode.connect(delayNode);
+  delayFeedbackGainNode.connect(lowpassFilterNode);
   lowpassFilterNode.connect(volumeNode);
   volumeNode.connect(audioContext.destination);
 
@@ -82,9 +85,12 @@ function initializeSynth() {
   lowpassFilterNode.frequency.value = (0.5 * audioContext.sampleRate) / 2;
   lowpassFilterNode.Q.value = 15;
 
+  // ADSR
+  adsrGainNode.gain.value = 0.0;
+
   // Delay
-  delayNode.delayTime.value = 0.1;
-  delayFeedbackGainNode.gain.value = 0.5;
+  delayNode.delayTime.value = 0.5;
+  delayFeedbackGainNode.gain.value = 0.0;
 
   synth = {
     audioContext,
@@ -96,6 +102,7 @@ function initializeSynth() {
       createOscillator(audioContext, 4, adsrGainNode),
       createOscillator(audioContext, 4, adsrGainNode),
     ],
+    noise: createWhiteNoise(audioContext, adsrGainNode),
     lowpass: {
       filterNode: lowpassFilterNode,
     },
@@ -125,8 +132,7 @@ function createOscillator(
   oscillator.detune.value = 0;
 
   const gainNode = new GainNode(audioContext);
-  const volume = 0.5;
-  gainNode.gain.value = volume;
+  gainNode.gain.value = 0.5;
 
   // OSC -> Gain -> Destination
   oscillator.connect(gainNode);
@@ -138,7 +144,91 @@ function createOscillator(
     osc: oscillator,
     gain: gainNode,
     octave,
-    volume,
+  };
+}
+
+function createWhiteNoise(audioContext: AudioContext, destination: AudioNode) {
+  const bufferSize = audioContext.sampleRate * 2; // 2 seconds of audio
+  const buffer = audioContext.createBuffer(
+    1,
+    bufferSize,
+    audioContext.sampleRate
+  );
+
+  const channelData = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    channelData[i] = Math.random() * 2 - 1;
+  }
+
+  const noiseGeneratorNode = audioContext.createBufferSource();
+  noiseGeneratorNode.buffer = buffer;
+  noiseGeneratorNode.loop = true;
+
+  const gainNode = new GainNode(audioContext);
+  gainNode.gain.value = 0.5;
+
+  // Noise generator -> Gain -> Destination
+  // NOTE: noiseGeneratorNode is disconnected by default
+  gainNode.connect(destination);
+
+  // start playing the noise
+  noiseGeneratorNode.start();
+
+  return {
+    enabled: false,
+    generator: noiseGeneratorNode,
+    gain: gainNode,
+  };
+}
+
+function createPinkNoise(audioContext: AudioContext, destination: AudioNode) {
+  const bufferSize = audioContext.sampleRate * 2; // 2 seconds of audio
+  const noiseBuffer = audioContext.createBuffer(
+    1,
+    bufferSize,
+    audioContext.sampleRate
+  );
+
+  // Based on https://noisehack.com/generate-noise-web-audio-api/
+  // which in turn is based on "Paul Kellet’s refined method", now 404
+  const b = [0, 0, 0, 0, 0, 0, 0];
+  const channelData = noiseBuffer.getChannelData(0);
+
+  for (let i = 0; i < bufferSize; i++) {
+    const white = Math.random() * 2 - 1;
+
+    b[0] = 0.99886 * b[0] + white * 0.0555179;
+    b[1] = 0.99332 * b[1] + white * 0.0750759;
+    b[2] = 0.969 * b[2] + white * 0.153852;
+    b[3] = 0.8665 * b[3] + white * 0.3104856;
+    b[4] = 0.55 * b[4] + white * 0.5329522;
+    b[5] = -0.7616 * b[5] - white * 0.016898;
+
+    channelData[i] =
+      b[0] + b[1] + b[2] + b[3] + b[4] + b[5] + b[6] + white * 0.5362;
+    channelData[i] *= 0.11; // (roughly) compensate for gain
+    b[6] = white * 0.115926;
+  }
+
+  // Connect the noise buffer to the filter
+  const noiseGeneratorNode = audioContext.createBufferSource();
+  noiseGeneratorNode.buffer = noiseBuffer;
+  noiseGeneratorNode.loop = true;
+
+  // Gain node to control volume
+  const gainNode = new GainNode(audioContext);
+  gainNode.gain.value = 0.5;
+
+  // Noise generator -> Gain -> Destination
+  // NOTE: noiseGeneratorNode is disconnected by default
+  gainNode.connect(destination);
+
+  noiseGeneratorNode.start();
+
+  return {
+    enabled: false,
+    generator: noiseGeneratorNode,
+    gain: gainNode,
   };
 }
 
@@ -237,6 +327,45 @@ function toggleOscillator(enabled: boolean, oscillator: number) {
     );
   } else {
     synth.oscillators[oscillator].osc.disconnect();
+  }
+}
+
+// Noise generator
+
+function setNoiseVolume(volume: string) {
+  if (!synth) initializeSynth();
+  synth.noise.gain.gain.value = Number(volume);
+}
+
+function toggleNoise(enabled: boolean) {
+  if (!synth) initializeSynth();
+  if (enabled) {
+    synth.noise.generator.connect(synth.noise.gain);
+  } else {
+    synth.noise.generator.disconnect();
+  }
+
+  synth.noise.enabled = enabled;
+}
+
+function toggleNoiseColor(isWhite: boolean) {
+  if (!synth) initializeSynth();
+  synth.noise.generator.disconnect();
+
+  const isEnabled = synth.noise.enabled;
+  const volume = synth.noise.gain.gain.value;
+
+  if (isWhite) {
+    synth.noise = createWhiteNoise(synth.audioContext, synth.adsr.gainNode);
+  } else {
+    synth.noise = createPinkNoise(synth.audioContext, synth.adsr.gainNode);
+  }
+
+  synth.noise.enabled = isEnabled;
+  synth.noise.gain.gain.value = volume;
+
+  if (synth.noise.enabled) {
+    synth.noise.generator.connect(synth.noise.gain);
   }
 }
 
