@@ -135,6 +135,7 @@ label {
 }
 
 input[type="range" i] {
+  width: 161px;
   padding-top: 1em;
   padding-bottom: 1em;
   margin: 1em 0;
@@ -163,4 +164,21 @@ input[type="range" i]::-webkit-slider-thumb {
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
   -webkit-appearance: none;
   margin-top: -1em;
+}
+
+.space-between {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.waveform-input {
+  background-size: 31% 100% !important;
+  margin-bottom: 0 !important;
+  background-position: 5% 0% !important;
+}
+
+small {
+  font-weight: bold;
+  color: #f9f9f9;
 }

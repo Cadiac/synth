@@ -24,7 +24,7 @@ function getFrequency(note: String) {
 type Synth = {
   audioContext: AudioContext;
   oscillators: OscillatorNode[];
-  wave: OscillatorType;
+  waveform: OscillatorType;
   detune: number;
   volume: {
     gainNode: GainNode;
@@ -87,7 +87,7 @@ function initializeSynth() {
       gainNode: volumeNode,
     },
     oscillators: [],
-    wave: "sawtooth",
+    waveform: "sawtooth",
     detune: 10,
     lowpass: {
       filterNode: lowpassFilterNode,
@@ -111,7 +111,7 @@ function initializeSynth() {
 
 function createOscillator(frequency: number, detune: number) {
   const oscillator = synth.audioContext.createOscillator();
-  oscillator.type = synth.wave;
+  oscillator.type = synth.waveform;
   oscillator.frequency.value = frequency;
   oscillator.detune.value = detune;
 
@@ -229,4 +229,17 @@ function setEchoDelay(time: string) {
 function setEchoFeedback(feedback: string) {
   if (!synth) initializeSynth();
   synth.echo.feedback = Number(feedback);
+}
+
+function setWaveform(waveform: string) {
+  if (!synth) initializeSynth();
+
+  const waveforms: OscillatorType[] = [
+    "sine",
+    "square",
+    "sawtooth",
+    "triangle",
+  ];
+
+  synth.waveform = waveforms[Number(waveform)];
 }
