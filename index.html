@@ -102,16 +102,25 @@
             <label for="detune">RANGE</label>
             <input id="detune" type="range" min="1" max="7" step="1" value="4"
               oninput="setOscillatorOctave(this.value, 0)" />
+            <div class="space-between">
+              <small>1</small>
+              <small>2</small>
+              <small>3</small>
+              <small>4</small>
+              <small>5</small>
+              <small>6</small>
+              <small>7</small>
+            </div>
           </div>
           <div class="column">
             <label for="detune">DETUNE</label>
             <input id="detune" type="range" min="0" max="30" step="1" value="15"
               oninput="setOscillatorDetune(this.value, 0)" />
-              <div class="space-between">
-                <small class="left">-30</small>
-                <small class="middle">0</small>
-                <small class="right">30</small>
-              </div>
+            <div class="space-between">
+              <small class="left">-30</small>
+              <small class="middle">0</small>
+              <small class="right">30</small>
+            </div>
           </div>
           <div class="column">
             <label for="detune">WAVEFORM</label>
@@ -132,16 +141,25 @@
             <label for="detune">RANGE</label>
             <input id="detune" type="range" min="1" max="7" step="1" value="4"
               oninput="setOscillatorOctave(this.value, 1)" />
+            <div class="space-between">
+              <small>1</small>
+              <small>2</small>
+              <small>3</small>
+              <small>4</small>
+              <small>5</small>
+              <small>6</small>
+              <small>7</small>
+            </div>
           </div>
           <div class="column">
             <label for="detune">DETUNE</label>
             <input id="detune" type="range" min="0" max="30" step="1" value="15"
               oninput="setOscillatorDetune(this.value, 1)" />
-              <div class="space-between">
-                <small class="left">-30</small>
-                <small class="middle">0</small>
-                <small class="right">30</small>
-              </div>
+            <div class="space-between">
+              <small class="left">-30</small>
+              <small class="middle">0</small>
+              <small class="right">30</small>
+            </div>
           </div>
           <div class="column">
             <label for="detune">WAVEFORM</label>
@@ -162,16 +180,25 @@
             <label for="detune">RANGE</label>
             <input id="detune" type="range" min="1" max="7" step="1" value="4"
               oninput="setOscillatorOctave(this.value, 2)" />
+            <div class="space-between">
+              <small>1</small>
+              <small>2</small>
+              <small>3</small>
+              <small>4</small>
+              <small>5</small>
+              <small>6</small>
+              <small>7</small>
+            </div>
           </div>
           <div class="column">
             <label for="detune">DETUNE</label>
             <input id="detune" type="range" min="-30" max="30" step="1" value="0"
               oninput="setOscillatorDetune(this.value, 2)" />
-              <div class="space-between">
-                <small class="left">-30</small>
-                <small class="middle">0</small>
-                <small class="right">30</small>
-              </div>
+            <div class="space-between">
+              <small class="left">-30</small>
+              <small class="middle">0</small>
+              <small class="right">30</small>
+            </div>
           </div>
           <div class="column">
             <label for="detune">WAVEFORM</label>
@@ -189,7 +216,7 @@
         <h3>OSCILLATOR BANK</h3>
       </div>
 
-      <!-- Oscillator bank -->
+      <!-- Mixer -->
       <div class="controls-container">
         <label for="mixer-1">OSCILLATOR-1</label>
         <div id="mixer-1" class="row">
@@ -200,6 +227,16 @@
             <div class="space-between">
               <small>0</small>
               <small>10</small>
+            </div>
+          </div>
+          <div class="column justify-flex-end">
+            <label class="switch">
+              <input type="checkbox" value="enabled" checked onchange="toggleOscillator(this.checked, 0)">
+              <span class="slider"></span>
+            </label>
+            <div class="space-between">
+              <small></small>
+              <small>ON</small>
             </div>
           </div>
         </div>
@@ -215,9 +252,19 @@
               <small>10</small>
             </div>
           </div>
+          <div class="column justify-flex-end">
+            <label class="switch">
+              <input type="checkbox" value="enabled" checked onchange="toggleOscillator(this.checked, 1)">
+              <span class="slider"></span>
+            </label>
+            <div class="space-between">
+              <small></small>
+              <small>ON</small>
+            </div>
+          </div>
         </div>
 
-        <label for="mixer-3">OSCILLATOR-1</label>
+        <label for="mixer-3">OSCILLATOR-3</label>
         <div id="mixer-3" class="row">
           <div class="column">
             <label for="detune">VOLUME</label>
@@ -226,6 +273,16 @@
             <div class="space-between">
               <small>0</small>
               <small>10</small>
+            </div>
+          </div>
+          <div class="column justify-flex-end">
+            <label class="switch">
+              <input type="checkbox" value="enabled" checked onchange="toggleOscillator(this.checked, 2)">
+              <span class="slider"></span>
+            </label>
+            <div class="space-between">
+              <small></small>
+              <small>ON</small>
             </div>
           </div>
         </div>

@@ -229,6 +229,17 @@ function setOscillatorOctave(octave: string, oscillator: number) {
   synth.oscillators[oscillator].octave = Number(octave);
 }
 
+function toggleOscillator(enabled: boolean, oscillator: number) {
+  if (!synth) initializeSynth();
+  if (enabled) {
+    synth.oscillators[oscillator].osc.connect(
+      synth.oscillators[oscillator].gain
+    );
+  } else {
+    synth.oscillators[oscillator].osc.disconnect();
+  }
+}
+
 // Lowpass filter
 
 function setLowpassFrequency(frequency: string) {
