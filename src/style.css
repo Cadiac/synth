@@ -188,6 +188,11 @@ input[type="range" i]::-webkit-slider-thumb {
   background-position: 5% 0% !important;
 }
 
+.octave-input {
+  background-size: 15.5% 100% !important;
+  background-position: 4% 0% !important;
+}
+
 small {
   font-weight: bold;
   color: #f9f9f9;

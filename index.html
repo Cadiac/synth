@@ -99,8 +99,8 @@
         <label for="oscillator-1">OSCILLATOR-1</label>
         <div id="oscillator-1" class="row">
           <div class="column">
-            <label for="detune">RANGE</label>
-            <input id="detune" type="range" min="1" max="7" step="1" value="4"
+            <label>RANGE</label>
+            <input class="octave-input" type="range" min="1" max="7" step="1" value="4"
               oninput="setOscillatorOctave(this.value, 0)" />
             <div class="space-between">
               <small>1</small>
@@ -113,8 +113,8 @@
             </div>
           </div>
           <div class="column">
-            <label for="detune">DETUNE</label>
-            <input id="detune" type="range" min="0" max="30" step="1" value="15"
+            <label>DETUNE</label>
+            <input type="range" min="0" max="30" step="1" value="15"
               oninput="setOscillatorDetune(this.value, 0)" />
             <div class="space-between">
               <small class="left">-30</small>
@@ -123,8 +123,8 @@
             </div>
           </div>
           <div class="column">
-            <label for="detune">WAVEFORM</label>
-            <input class="waveform-input" id="detune" type="range" min="0" max="3" step="1" value="2"
+            <label>WAVEFORM</label>
+            <input class="waveform-input" type="range" min="0" max="3" step="1" value="2"
               oninput="setOscillatorWaveform(this.value, 0)" />
             <div class="space-between">
               <small>SIN</small>
@@ -138,8 +138,8 @@
         <label for="oscillator-2">OSCILLATOR-2</label>
         <div id="oscillator-2" class="row">
           <div class="column">
-            <label for="detune">RANGE</label>
-            <input id="detune" type="range" min="1" max="7" step="1" value="4"
+            <label>RANGE</label>
+            <input class="octave-input" type="range" min="1" max="7" step="1" value="4"
               oninput="setOscillatorOctave(this.value, 1)" />
             <div class="space-between">
               <small>1</small>
@@ -152,8 +152,8 @@
             </div>
           </div>
           <div class="column">
-            <label for="detune">DETUNE</label>
-            <input id="detune" type="range" min="0" max="30" step="1" value="15"
+            <label>DETUNE</label>
+            <input type="range" min="0" max="30" step="1" value="15"
               oninput="setOscillatorDetune(this.value, 1)" />
             <div class="space-between">
               <small class="left">-30</small>
@@ -162,8 +162,8 @@
             </div>
           </div>
           <div class="column">
-            <label for="detune">WAVEFORM</label>
-            <input class="waveform-input" id="detune" type="range" min="0" max="3" step="1" value="2"
+            <label>WAVEFORM</label>
+            <input class="waveform-input" type="range" min="0" max="3" step="1" value="2"
               oninput="setOscillatorWaveform(this.value, 1)" />
             <div class="space-between">
               <small>SIN</small>
@@ -177,8 +177,8 @@
         <label for="oscillator-3">OSCILLATOR-3</label>
         <div id="oscillator-3" class="row">
           <div class="column">
-            <label for="detune">RANGE</label>
-            <input id="detune" type="range" min="1" max="7" step="1" value="4"
+            <label>RANGE</label>
+            <input class="octave-input" type="range" min="1" max="7" step="1" value="4"
               oninput="setOscillatorOctave(this.value, 2)" />
             <div class="space-between">
               <small>1</small>
@@ -191,8 +191,8 @@
             </div>
           </div>
           <div class="column">
-            <label for="detune">DETUNE</label>
-            <input id="detune" type="range" min="-30" max="30" step="1" value="0"
+            <label>DETUNE</label>
+            <input type="range" min="-30" max="30" step="1" value="0"
               oninput="setOscillatorDetune(this.value, 2)" />
             <div class="space-between">
               <small class="left">-30</small>
@@ -201,8 +201,8 @@
             </div>
           </div>
           <div class="column">
-            <label for="detune">WAVEFORM</label>
-            <input class="waveform-input" id="detune" type="range" min="0" max="3" step="1" value="2"
+            <label>WAVEFORM</label>
+            <input class="waveform-input" type="range" min="0" max="3" step="1" value="2"
               oninput="setOscillatorWaveform(this.value, 2)" />
             <div class="space-between">
               <small>SIN</small>
@@ -221,8 +221,8 @@
         <label for="mixer-1">OSCILLATOR-1</label>
         <div id="mixer-1" class="row">
           <div class="column">
-            <label for="detune">VOLUME</label>
-            <input id="detune" type="range" min="0" max="1" step="0.01" value="0.5"
+            <label>VOLUME</label>
+            <input type="range" min="0" max="1" step="0.01" value="0.5"
               oninput="setOscillatorVolume(this.value, 0)" />
             <div class="space-between">
               <small>0</small>
@@ -244,8 +244,8 @@
         <label for="mixer-2">OSCILLATOR-2</label>
         <div id="mixer-2" class="row">
           <div class="column">
-            <label for="detune">VOLUME</label>
-            <input id="detune" type="range" min="0" max="1" step="0.01" value="0.5"
+            <label>VOLUME</label>
+            <input type="range" min="0" max="1" step="0.01" value="0.5"
               oninput="setOscillatorVolume(this.value, 1)" />
             <div class="space-between">
               <small>0</small>
@@ -267,8 +267,8 @@
         <label for="mixer-3">OSCILLATOR-3</label>
         <div id="mixer-3" class="row">
           <div class="column">
-            <label for="detune">VOLUME</label>
-            <input id="detune" type="range" min="0" max="1" step="0.01" value="0.5"
+            <label>VOLUME</label>
+            <input type="range" min="0" max="1" step="0.01" value="0.5"
               oninput="setOscillatorVolume(this.value, 2)" />
             <div class="space-between">
               <small>0</small>
@@ -304,6 +304,13 @@
           <input id="release" type="range" min="0" max="1" step="0.01" value="0.4"
             oninput="setAdsrRelease(this.value)" />
         </div>
+
+        <!-- Master -->
+        <div class="controls-container">
+          <label for="volume">VOLUME</label>
+          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8"
+            oninput="setMasterVolume(this.value)" />
+        </div>
       </div>
 
       <div class="column">
@@ -325,15 +332,6 @@
           <label for="echo-feedback">FDBK</label>
           <input id="echo-feedback" type="range" min="0" max="1" step="0.01" value="0.5"
             oninput="setEchoFeedback(this.value)" />
-        </div>
-      </div>
-
-      <div class="column">
-        <!-- Master -->
-        <div class="controls-container">
-          <label for="volume">VOLUME</label>
-          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8"
-            oninput="setMasterVolume(this.value)" />
         </div>
       </div>
     </div>
