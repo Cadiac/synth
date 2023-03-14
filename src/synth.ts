@@ -418,3 +418,44 @@ function setEchoFeedback(feedback: string) {
     synth.audioContext.currentTime
   );
 }
+
+const KEYMAP: { [key in string]: string } = {
+  A: "C4",
+  W: "C#4",
+  S: "D4",
+  E: "D#4",
+  D: "E4",
+  F: "F4",
+  T: "F#4",
+  G: "G4",
+  Y: "G#4",
+  H: "A4",
+  U: "A#4",
+  J: "B4",
+  K: "C5",
+  O: "C#5",
+  L: "D5",
+  P: "D#5",
+  Ö: "E5",
+  Ä: "F5",
+  DEAD: "F#5",
+  "'": "G5",
+};
+
+window.addEventListener("keydown", (event) => {
+  if (event.repeat) return;
+
+  const key = event.key.toUpperCase();
+  if (key in KEYMAP) {
+    startNote(KEYMAP[key]);
+  }
+});
+
+window.addEventListener("keyup", (event) => {
+  if (event.repeat) return;
+
+  const key = event.key.toUpperCase();
+  if (key in KEYMAP) {
+    stopNote();
+  }
+});
