@@ -1,58 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎹</text></svg>">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Synth</title>
-    <link rel="stylesheet" href="/src/style.css">
-  </head>
-  <body>
-    <div id="app">
-      <div class="keyboard">
-        <div class="minor-keys">
-          <button class="key" onmousedown="playNote('C#4')" onmouseup="stopNote()">
-            C#4
-          </button>
-          <button class="key" onmousedown="playNote('D#4')" onmouseup="stopNote()">
-            D#4
-          </button>
-          <div class="spacer-key"></div>
-          <button class="key" onmousedown="playNote('F#4')" onmouseup="stopNote()">
-            F#4
-          </button>
-          <button class="key" onmousedown="playNote('G#4')" onmouseup="stopNote()">
-            G#4
-          </button>
-          <button class="key" onmousedown="playNote('A#4')" onmouseup="stopNote()">
-            A#4
-          </button>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎹</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Synth</title>
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+  <div id="app">
+    <div class="keyboard">
+      <div class="minor-keys">
+        <button class="key" onmousedown="playNote('C#4')" onmouseup="stopNote()">
+          C#4
+        </button>
+        <button class="key" onmousedown="playNote('D#4')" onmouseup="stopNote()">
+          D#4
+        </button>
+        <div class="spacer-key"></div>
+        <button class="key" onmousedown="playNote('F#4')" onmouseup="stopNote()">
+          F#4
+        </button>
+        <button class="key" onmousedown="playNote('G#4')" onmouseup="stopNote()">
+          G#4
+        </button>
+        <button class="key" onmousedown="playNote('A#4')" onmouseup="stopNote()">
+          A#4
+        </button>
+      </div>
+      <div class="major-keys">
+        <button class="key" onmousedown="playNote('C4')" onmouseup="stopNote()">
+          C-4
+        </button>
+        <button class="key" onmousedown="playNote('D4')" onmouseup="stopNote()">
+          D-4
+        </button>
+        <button class="key" onmousedown="playNote('E4')" onmouseup="stopNote()">
+          E-4
+        </button>
+        <button class="key" onmousedown="playNote('F4')" onmouseup="stopNote()">
+          F-4
+        </button>
+        <button class="key" onmousedown="playNote('G4')" onmouseup="stopNote()">
+          G-4
+        </button>
+        <button class="key" onmousedown="playNote('A4')" onmouseup="stopNote()">
+          A-4
+        </button>
+        <button class="key" onmousedown="playNote('B4')" onmouseup="stopNote()">
+          B-4
+        </button>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="column">
+        <!-- Master -->
+        <div class="controls-container">
+          <label for="volume">VOL</label>
+          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8" oninput="setVolume(this.value)" />
         </div>
-        <div class="major-keys">
-          <button class="key" onmousedown="playNote('C4')" onmouseup="stopNote()">
-            C-4
-          </button>
-          <button class="key" onmousedown="playNote('D4')" onmouseup="stopNote()">
-            D-4
-          </button>
-          <button class="key" onmousedown="playNote('E4')" onmouseup="stopNote()">
-            E-4
-          </button>
-          <button class="key" onmousedown="playNote('F4')" onmouseup="stopNote()">
-            F-4
-          </button>
-          <button class="key" onmousedown="playNote('G4')" onmouseup="stopNote()">
-            G-4
-          </button>
-          <button class="key" onmousedown="playNote('A4')" onmouseup="stopNote()">
-            A-4
-          </button>
-          <button class="key" onmousedown="playNote('B4')" onmouseup="stopNote()">
-            B-4
-          </button>
+
+        <!-- Oscillator -->
+        <div class="controls-container">
+          <label for="detune">DETUNE</label>
+          <input class="synth-slider" id="detune" type="range" min="0" max="30" step="1" value="15" oninput="setDetune(this.value)" />
+        </div>
+      </div>
+
+      <div class="column">
+        <!-- ADSR -->
+        <div class="controls-container">
+          <label for="attack">ATK</label>
+          <input id="attack" type="range" min="0" max="1" step="0.01" value="0.1" oninput="setAdsrAttack(this.value)" />
+          <label for="decay">DEC</label>
+          <input id="decay" type="range" min="0" max="1" step="0.01" value="0.2" oninput="setAdsrDecay(this.value)" />
+          <label for="sustain">SUS</label>
+          <input id="sustain" type="range" min="0" max="1" step="0.01" value="0.3"
+            oninput="setAdsrSustain(this.value)" />
+          <label for="release">REL</label>
+          <input id="release" type="range" min="0" max="1" step="0.01" value="0.4"
+            oninput="setAdsrRelease(this.value)" />
+        </div>
+      </div>
+
+      <div class="column">
+        <!-- Lowpass filter -->
+        <div class="controls-container">
+          <label for="lowpass-freq">FRQ</label>
+          <input id="lowpass-freq" type="range" min="0" max="1" step="0.01" value="0.5"
+            oninput="setLowpassFrequency(this.value)" />
+          <label for="lowpass-q">Q</label>
+          <input id="lowpass-q" type="range" min="0" max="1" step="0.01" value="0.5"
+            oninput="setLowpassQ(this.value)" />
+        </div>
+
+        <!-- Echo -->
+        <div class="controls-container">
+          <label for="echo-delay">DELAY</label>
+          <input id="echo-delay" type="range" min="0" max="1" step="0.01" value="0.1"
+            oninput="setEchoDelay(this.value)" />
+          <label for="echo-feedback">FDBK</label>
+          <input id="echo-feedback" type="range" min="0" max="1" step="0.01" value="0.5"
+            oninput="setEchoFeedback(this.value)" />
         </div>
       </div>
     </div>
-    <script src="/src/synth.ts"></script>
-  </body>
+  </div>
+  <script src="/src/synth.ts"></script>
+</body>
+
 </html>

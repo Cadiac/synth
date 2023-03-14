@@ -28,12 +28,9 @@ type Synth = {
   detune: number;
   volume: {
     gainNode: GainNode;
-    gain: number;
   };
   lowpass: {
     filterNode: BiquadFilterNode;
-    frequency: number;
-    q: number;
   };
   adsr: {
     gainNode: GainNode;
@@ -46,9 +43,8 @@ type Synth = {
   echo: {
     delayNode: DelayNode;
     feedbackGainNode: GainNode;
-    time: number;
+    delay: number;
     feedback: number;
-    maxDuration: number;
   };
 };
 
@@ -81,41 +77,34 @@ function initializeSynth() {
   volumeNode.gain.value = volume;
 
   // Lowpass filter
-  const lowpassFrequency = 0.5;
-  const lowpassQ = 0.5;
   lowpassFilterNode.type = "lowpass";
-  lowpassFilterNode.frequency.value =
-    (lowpassFrequency * audioContext.sampleRate) / 2;
-  lowpassFilterNode.Q.value = lowpassQ * 30;
+  lowpassFilterNode.frequency.value = (0.5 * audioContext.sampleRate) / 2;
+  lowpassFilterNode.Q.value = 15;
 
   synth = {
     audioContext,
     volume: {
       gainNode: volumeNode,
-      gain: volume,
     },
     oscillators: [],
     wave: "sawtooth",
     detune: 10,
     lowpass: {
       filterNode: lowpassFilterNode,
-      frequency: lowpassFrequency,
-      q: lowpassQ,
     },
     adsr: {
       gainNode: adsrGainNode,
-      attack: 0.0,
-      decay: 0.5,
-      sustain: 1.5,
-      release: 0.5,
+      attack: 0.1,
+      decay: 0.2,
+      sustain: 0.3,
+      release: 0.4,
       maxDuration: 2,
     },
     echo: {
       delayNode,
       feedbackGainNode: delayFeedbackGainNode,
-      time: 0.1,
+      delay: 0.1,
       feedback: 0.5,
-      maxDuration: 2,
     },
   };
 }
@@ -164,8 +153,7 @@ function playNote(note: string) {
     decayDuration
   );
 
-  synth.echo.delayNode.delayTime.value =
-    synth.echo.time * synth.echo.maxDuration;
+  synth.echo.delayNode.delayTime.value = synth.echo.delay;
   synth.echo.feedbackGainNode.gain.setValueAtTime(
     synth.echo.feedback,
     synth.audioContext.currentTime
@@ -190,4 +178,55 @@ function stopNote() {
   synth.adsr.gainNode.gain.linearRampToValueAtTime(0, releaseEnd);
 
   synth.oscillators.forEach((osc) => osc.stop(releaseEnd));
+}
+
+function setVolume(volume: string) {
+  if (!synth) initializeSynth();
+  synth.volume.gainNode.gain.value = Number(volume);
+}
+
+function setDetune(detune: string) {
+  if (!synth) initializeSynth();
+  synth.detune = Number(detune);
+}
+
+function setLowpassFrequency(frequency: string) {
+  if (!synth) initializeSynth();
+  synth.lowpass.filterNode.frequency.value =
+    (Number(frequency) * synth.audioContext.sampleRate) / 2;
+}
+
+function setLowpassQ(q: string) {
+  if (!synth) initializeSynth();
+  synth.lowpass.filterNode.Q.value = Number(q) * 30;
+}
+
+function setAdsrAttack(attack: string) {
+  if (!synth) initializeSynth();
+  synth.adsr.attack = Number(attack);
+}
+
+function setAdsrDecay(decay: string) {
+  if (!synth) initializeSynth();
+  synth.adsr.decay = Number(decay);
+}
+
+function setAdsrSustain(sustain: string) {
+  if (!synth) initializeSynth();
+  synth.adsr.sustain = Number(sustain);
+}
+
+function setAdsrRelease(release: string) {
+  if (!synth) initializeSynth();
+  synth.adsr.release = Number(release);
+}
+
+function setEchoDelay(time: string) {
+  if (!synth) initializeSynth();
+  synth.echo.delay = Number(time);
+}
+
+function setEchoFeedback(feedback: string) {
+  if (!synth) initializeSynth();
+  synth.echo.feedback = Number(feedback);
 }
