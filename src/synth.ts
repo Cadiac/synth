@@ -1,27 +1,11 @@
-function getFrequency(note: String, baseOctave: number) {
+function getFrequency(note: number, baseOctave: number) {
   const baseFrequency = 440; // A4
-  const noteNames: { [key: string]: number } = {
-    C: -9,
-    "C#": -8,
-    D: -7,
-    "D#": -6,
-    E: -5,
-    F: -4,
-    "F#": -3,
-    G: -2,
-    "G#": -1,
-    A: 0,
-    "A#": 1,
-    B: 2,
-  };
-
-  const octave = parseInt(note[note.length - 1]);
-  const noteName = note.slice(0, -1);
-  const n = noteNames[noteName] + (baseOctave - 4 + octave - 4) * 12;
+  const n = note + (baseOctave - 4) * 12;
   return baseFrequency * Math.pow(2, n / 12);
 }
 
 type Synth = {
+  playingNotes: Set<number>;
   audioContext: AudioContext;
   oscillators: {
     osc: OscillatorNode;
@@ -93,6 +77,7 @@ function initializeSynth() {
   delayFeedbackGainNode.gain.value = 0.0;
 
   synth = {
+    playingNotes: new Set(),
     audioContext,
     volume: {
       gainNode: volumeNode,
@@ -232,10 +217,17 @@ function createPinkNoise(audioContext: AudioContext, destination: AudioNode) {
   };
 }
 
-function startNote(note: string) {
+function highestPlayingNote() {
+  return Math.max(...synth.playingNotes);
+}
+
+function startNote(note: number) {
   if (!synth) {
     initializeSynth();
   }
+
+  synth.playingNotes.add(note);
+  const noteToPlay = highestPlayingNote();
 
   synth.adsr.gainNode.gain.cancelScheduledValues(
     synth.audioContext.currentTime
@@ -246,7 +238,7 @@ function startNote(note: string) {
 
   synth.oscillators.forEach((oscillator) => {
     oscillator.osc.frequency.setValueAtTime(
-      getFrequency(note, oscillator.octave),
+      getFrequency(noteToPlay, oscillator.octave),
       synth.audioContext.currentTime
     );
   });
@@ -264,7 +256,20 @@ function startNote(note: string) {
   );
 }
 
-function stopNote() {
+function stopNote(note: number) {
+  synth.playingNotes.delete(note);
+  if (synth.playingNotes.size > 0) {
+    const noteToPlay = highestPlayingNote();
+    synth.oscillators.forEach((oscillator) => {
+      oscillator.osc.frequency.setValueAtTime(
+        getFrequency(noteToPlay, oscillator.octave),
+        synth.audioContext.currentTime
+      );
+    });
+
+    return;
+  }
+
   synth.adsr.gainNode.gain.cancelScheduledValues(
     synth.audioContext.currentTime
   );
@@ -419,27 +424,27 @@ function setEchoFeedback(feedback: string) {
   );
 }
 
-const KEYMAP: { [key in string]: string } = {
-  A: "C4",
-  W: "C#4",
-  S: "D4",
-  E: "D#4",
-  D: "E4",
-  F: "F4",
-  T: "F#4",
-  G: "G4",
-  Y: "G#4",
-  H: "A4",
-  U: "A#4",
-  J: "B4",
-  K: "C5",
-  O: "C#5",
-  L: "D5",
-  P: "D#5",
-  Ö: "E5",
-  Ä: "F5",
-  DEAD: "F#5",
-  "'": "G5",
+const KEYMAP: { [key in string]: number } = {
+  A: -9,
+  W: -8,
+  S: -7,
+  E: -6,
+  D: -5,
+  F: -4,
+  T: -3,
+  G: -2,
+  Y: -1,
+  H: 0,
+  U: 1,
+  J: 2,
+  K: 3,
+  O: 4,
+  L: 5,
+  P: 6,
+  Ö: 7,
+  Ä: 8,
+  DEAD: 9,
+  "'": 10,
 };
 
 window.addEventListener("keydown", (event) => {
@@ -456,6 +461,6 @@ window.addEventListener("keyup", (event) => {
 
   const key = event.key.toUpperCase();
   if (key in KEYMAP) {
-    stopNote();
+    stopNote(KEYMAP[key]);
   }
 });
