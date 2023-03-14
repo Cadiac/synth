@@ -83,9 +83,9 @@ function initializeSynth() {
       gainNode: volumeNode,
     },
     oscillators: [
-      createOscillator(audioContext, 4, adsrGainNode),
-      createOscillator(audioContext, 4, adsrGainNode),
-      createOscillator(audioContext, 4, adsrGainNode),
+      createOscillator(audioContext, 4, adsrGainNode, true),
+      createOscillator(audioContext, 4, adsrGainNode, false),
+      createOscillator(audioContext, 4, adsrGainNode, false),
     ],
     noise: createWhiteNoise(audioContext, adsrGainNode),
     lowpass: {
@@ -109,7 +109,8 @@ function initializeSynth() {
 function createOscillator(
   audioContext: AudioContext,
   octave: number,
-  destination: AudioNode
+  destination: AudioNode,
+  enabled: boolean
 ) {
   const oscillator = new OscillatorNode(audioContext);
   oscillator.type = "sawtooth";
@@ -120,7 +121,9 @@ function createOscillator(
   gainNode.gain.value = 0.5;
 
   // OSC -> Gain -> Destination
-  oscillator.connect(gainNode);
+  if (enabled) {
+    oscillator.connect(gainNode);
+  }
   gainNode.connect(destination);
 
   oscillator.start();

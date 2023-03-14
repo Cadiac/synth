@@ -114,11 +114,11 @@
           </div>
           <div class="column">
             <label>DETUNE</label>
-            <input type="range" min="0" max="30" step="1" value="15" oninput="setOscillatorDetune(this.value, 0)" />
+            <input type="range" min="-90" max="90" step="1" value="0" oninput="setOscillatorDetune(this.value, 0)" />
             <div class="space-between">
-              <small class="left">-30</small>
+              <small class="left">-90</small>
               <small class="middle">0</small>
-              <small class="right">30</small>
+              <small class="right">90</small>
             </div>
           </div>
           <div class="column">
@@ -152,11 +152,11 @@
           </div>
           <div class="column">
             <label>DETUNE</label>
-            <input type="range" min="0" max="30" step="1" value="15" oninput="setOscillatorDetune(this.value, 1)" />
+            <input type="range" min="-90" max="90" step="1" value="0" oninput="setOscillatorDetune(this.value, 1)" />
             <div class="space-between">
-              <small class="left">-30</small>
+              <small class="left">-90</small>
               <small class="middle">0</small>
-              <small class="right">30</small>
+              <small class="right">90</small>
             </div>
           </div>
           <div class="column">
@@ -190,11 +190,11 @@
           </div>
           <div class="column">
             <label>DETUNE</label>
-            <input type="range" min="-30" max="30" step="1" value="0" oninput="setOscillatorDetune(this.value, 2)" />
+            <input type="range" min="-90" max="90" step="1" value="0" oninput="setOscillatorDetune(this.value, 2)" />
             <div class="space-between">
-              <small class="left">-30</small>
+              <small class="left">-90</small>
               <small class="middle">0</small>
-              <small class="right">30</small>
+              <small class="right">90</small>
             </div>
           </div>
           <div class="column">
@@ -215,113 +215,146 @@
 
       <!-- Mixer -->
       <div class="controls-container">
-        <div class="group">
-          <label for="mixer-1">OSCILLATOR-1</label>
-          <div id="mixer-1" class="row">
-            <div class="column">
-              <label>VOLUME</label>
-              <input type="range" min="0" max="1" step="0.01" value="0.5"
-                oninput="setOscillatorVolume(this.value, 0)" />
-              <div class="space-between">
-                <small>0</small>
-                <small>10</small>
+        <div class="row">
+          <div class="column">
+            <div class="group">
+              <label for="mixer-1">OSCILLATOR-1</label>
+              <div id="mixer-1" class="row">
+                <div class="column">
+                  <label>VOLUME</label>
+                  <input type="range" min="0" max="1" step="0.01" value="0.5"
+                    oninput="setOscillatorVolume(this.value, 0)" />
+                  <div class="space-between">
+                    <small>0</small>
+                    <small>10</small>
+                  </div>
+                </div>
+                <div class="column justify-flex-end">
+                  <label class="switch">
+                    <input type="checkbox" value="enabled" checked onchange="toggleOscillator(this.checked, 0)">
+                    <span class="slider"></span>
+                  </label>
+                  <div class="space-between">
+                    <small></small>
+                    <small>ON</small>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="column justify-flex-end">
-              <label class="switch">
-                <input type="checkbox" value="enabled" checked onchange="toggleOscillator(this.checked, 0)">
-                <span class="slider"></span>
-              </label>
-              <div class="space-between">
-                <small></small>
-                <small>ON</small>
+
+            <div class="group">
+              <label for="mixer-2">OSCILLATOR-2</label>
+              <div id="mixer-2" class="row">
+                <div class="column">
+                  <label>VOLUME</label>
+                  <input type="range" min="0" max="1" step="0.01" value="0.5"
+                    oninput="setOscillatorVolume(this.value, 1)" />
+                  <div class="space-between">
+                    <small>0</small>
+                    <small>10</small>
+                  </div>
+                </div>
+                <div class="column justify-flex-end">
+                  <label class="switch">
+                    <input type="checkbox" value="enabled" onchange="toggleOscillator(this.checked, 1)">
+                    <span class="slider"></span>
+                  </label>
+                  <div class="space-between">
+                    <small></small>
+                    <small>ON</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="group">
+              <label for="mixer-3">OSCILLATOR-3</label>
+              <div id="mixer-3" class="row">
+                <div class="column">
+                  <label>VOLUME</label>
+                  <input type="range" min="0" max="1" step="0.01" value="0.5"
+                    oninput="setOscillatorVolume(this.value, 2)" />
+                  <div class="space-between">
+                    <small>0</small>
+                    <small>10</small>
+                  </div>
+                </div>
+                <div class="column justify-flex-end">
+                  <label class="switch">
+                    <input type="checkbox" value="enabled" onchange="toggleOscillator(this.checked, 2)">
+                    <span class="slider"></span>
+                  </label>
+                  <div class="space-between">
+                    <small></small>
+                    <small>ON</small>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="group">
-          <label for="mixer-2">OSCILLATOR-2</label>
-          <div id="mixer-2" class="row">
-            <div class="column">
-              <label>VOLUME</label>
-              <input type="range" min="0" max="1" step="0.01" value="0.5"
-                oninput="setOscillatorVolume(this.value, 1)" />
-              <div class="space-between">
-                <small>0</small>
-                <small>10</small>
+          <div class="column align-self-end">
+            <div class="group">
+              <label for="mixer-3">EXTERNAL INPUT</label>
+              <div id="mixer-3" class="row">
+                <div class="column justify-flex-end">
+                  <label class="switch">
+                    <input type="checkbox" value="enabled" disabled onchange="toggleExternal(this.checked)">
+                    <span class="slider"></span>
+                  </label>
+                  <div class="space-between">
+                    <small></small>
+                    <small>ON</small>
+                  </div>
+                </div>
+                <div class="column">
+                  <label>VOLUME</label>
+                  <input type="range" disabled min="0" max="1" step="0.01" value="0.5"
+                    oninput="setExternalVolume(this.value)" />
+                  <div class="space-between">
+                    <small>0</small>
+                    <small>10</small>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="column justify-flex-end">
-              <label class="switch">
-                <input type="checkbox" value="enabled" checked onchange="toggleOscillator(this.checked, 1)">
-                <span class="slider"></span>
-              </label>
-              <div class="space-between">
-                <small></small>
-                <small>ON</small>
+
+            <div class="group">
+              <label for="mixer-3">NOISE</label>
+              <div id="mixer-3" class="row">
+                <div class="column centered">
+                  <label class="switch">
+                    <input type="checkbox" value="enabled" onchange="toggleNoise(this.checked)">
+                    <span class="slider"></span>
+                  </label>
+                  <div class="space-between">
+                    <small></small>
+                    <small>ON</small>
+                  </div>
+                </div>
+
+                <div class="column">
+                  <label>VOLUME</label>
+                  <input type="range" min="0" max="1" step="0.01" value="0.5" oninput="setNoiseVolume(this.value)" />
+                  <div class="space-between">
+                    <small>0</small>
+                    <small>10</small>
+                  </div>
+
+                  <small>PINK</small>
+                  <div class="centered">
+                    <label class="switch-vertical">
+                      <input type="checkbox" value="enabled" checked onchange="toggleNoiseColor(this.checked)">
+                      <span class="slider slider-vertical"></span>
+                    </label>
+                  </div>
+                  <small>WHITE</small>
+                </div>
               </div>
             </div>
+
           </div>
-        </div>
 
-        <div class="group">
-          <label for="mixer-3">OSCILLATOR-3</label>
-          <div id="mixer-3" class="row">
-            <div class="column">
-              <label>VOLUME</label>
-              <input type="range" min="0" max="1" step="0.01" value="0.5"
-                oninput="setOscillatorVolume(this.value, 2)" />
-              <div class="space-between">
-                <small>0</small>
-                <small>10</small>
-              </div>
-            </div>
-            <div class="column justify-flex-end">
-              <label class="switch">
-                <input type="checkbox" value="enabled" checked onchange="toggleOscillator(this.checked, 2)">
-                <span class="slider"></span>
-              </label>
-              <div class="space-between">
-                <small></small>
-                <small>ON</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="group">
-          <label for="mixer-3">NOISE</label>
-          <div id="mixer-3" class="row">
-            <div class="column">
-              <label>VOLUME</label>
-              <input type="range" min="0" max="1" step="0.01" value="0.5" oninput="setNoiseVolume(this.value)" />
-              <div class="space-between">
-                <small>0</small>
-                <small>10</small>
-              </div>
-            </div>
-            <div class="column justify-flex-end">
-              <label class="switch">
-                <input type="checkbox" value="enabled" onchange="toggleNoise(this.checked)">
-                <span class="slider"></span>
-              </label>
-              <div class="space-between">
-                <small></small>
-                <small>ON</small>
-              </div>
-
-              <small>PINK</small>
-              <div class="centered">
-                <label class="switch-vertical">
-                  <input type="checkbox" value="enabled" checked onchange="toggleNoiseColor(this.checked)">
-                  <span class="slider slider-vertical"></span>
-                </label>
-              </div>
-              <small>WHITE</small>
-
-            </div>
-          </div>
         </div>
 
         <h3>MIXER</h3>
@@ -330,16 +363,59 @@
       <div class="column">
         <!-- ADSR -->
         <div class="controls-container">
-          <label for="attack">ATK</label>
-          <input id="attack" type="range" min="0" max="1" step="0.01" value="0.1" oninput="setAdsrAttack(this.value)" />
-          <label for="decay">DEC</label>
-          <input id="decay" type="range" min="0" max="1" step="0.01" value="0.2" oninput="setAdsrDecay(this.value)" />
-          <label for="sustain">SUS</label>
-          <input id="sustain" type="range" min="0" max="1" step="0.01" value="0.3"
-            oninput="setAdsrSustain(this.value)" />
-          <label for="release">REL</label>
-          <input id="release" type="range" min="0" max="1" step="0.01" value="0.4"
-            oninput="setAdsrRelease(this.value)" />
+          <div class="column">
+            <div class="group">
+              <label for="attack">ATTACK TIME</label>
+              <input id="attack" type="range" min="0" max="1" step="0.01" value="0.1"
+                oninput="setAdsrAttack(this.value)" />
+            </div>
+            <div class="group">
+              <label for="decay">DECAY TIME</label>
+              <input id="decay" type="range" min="0" max="1" step="0.01" value="0.2"
+                oninput="setAdsrDecay(this.value)" />
+            </div>
+            <div class="group">
+              <label for="sustain">SUSTAIN LEVEL</label>
+              <input id="sustain" type="range" min="0" max="1" step="0.01" value="0.3"
+                oninput="setAdsrSustain(this.value)" />
+            </div>
+            <div class="group">
+              <label for="release">RELEASE TIME</label>
+              <input id="release" type="range" min="0" max="1" step="0.01" value="0.4"
+                oninput="setAdsrRelease(this.value)" />
+            </div>
+          </div>
+          <h3>MODIFIERS</h3>
+        </div>
+      </div>
+
+      <div class="column">
+        <!-- Lowpass filter -->
+        <div class="controls-container">
+          <div class="group">
+            <label for="lowpass-freq">FRQ</label>
+            <input id="lowpass-freq" type="range" min="0.01" max="1" step="0.01" value="0.5"
+              oninput="setLowpassFrequency(this.value)" />
+          </div>
+          <div class="group">
+            <label for="lowpass-q">Q</label>
+            <input id="lowpass-q" type="range" min="0" max="1" step="0.01" value="0.5"
+              oninput="setLowpassQ(this.value)" />
+          </div>
+        </div>
+
+        <!-- Echo -->
+        <div class="controls-container">
+          <div class="group">
+            <label for="echo-delay">DELAY TIME</label>
+            <input id="echo-delay" type="range" min="0" max="1" step="0.01" value="0.5"
+              oninput="setEchoDelay(this.value)" />
+          </div>
+          <div class="group">
+            <label for="echo-feedback">FEEDBACK</label>
+            <input id="echo-feedback" type="range" min="0" max="1" step="0.01" value="0.0"
+              oninput="setEchoFeedback(this.value)" />
+          </div>
         </div>
 
         <!-- Master -->
@@ -347,28 +423,10 @@
           <label for="volume">VOLUME</label>
           <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8"
             oninput="setMasterVolume(this.value)" />
-        </div>
-      </div>
-
-      <div class="column">
-        <!-- Lowpass filter -->
-        <div class="controls-container">
-          <label for="lowpass-freq">FRQ</label>
-          <input id="lowpass-freq" type="range" min="0.01" max="1" step="0.01" value="0.5"
-            oninput="setLowpassFrequency(this.value)" />
-          <label for="lowpass-q">Q</label>
-          <input id="lowpass-q" type="range" min="0" max="1" step="0.01" value="0.5"
-            oninput="setLowpassQ(this.value)" />
-        </div>
-
-        <!-- Echo -->
-        <div class="controls-container">
-          <label for="echo-delay">DELAY</label>
-          <input id="echo-delay" type="range" min="0" max="1" step="0.01" value="0.5"
-            oninput="setEchoDelay(this.value)" />
-          <label for="echo-feedback">FDBK</label>
-          <input id="echo-feedback" type="range" min="0" max="1" step="0.01" value="0.0"
-            oninput="setEchoFeedback(this.value)" />
+          <div class="space-between">
+            <small>0</small>
+            <small>10</small>
+          </div>
         </div>
       </div>
     </div>

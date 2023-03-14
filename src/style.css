@@ -139,7 +139,7 @@ input[type="range" i] {
   -webkit-appearance: none;
   appearance: none;
   background-color: #1a1a1a;
-  background-size: 10px 100%;
+  background-size: 16px 100%;
   background-image: linear-gradient( to right, transparent -1px, #f9f9f9 0px, transparent 1px, transparent 100% );
   background-position: 0% 0%;
   background-repeat: repeat;
@@ -191,6 +191,10 @@ input[type="range" i]::-webkit-slider-thumb {
 
 .justify-flex-end {
   justify-content: flex-end;
+}
+
+.align-self-end {
+  align-self: flex-end;
 }
 
 .waveform-input {
