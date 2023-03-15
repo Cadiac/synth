@@ -1,7 +1,8 @@
-function getFrequency(note: number, baseOctave: number) {
+function getFrequency(note: number, baseOctave: number, pitch: number) {
   const baseFrequency = 440; // A4
+  const pitchMultiplier = Math.pow(2, pitch / 12);
   const n = note + (baseOctave - 4) * 12;
-  return baseFrequency * Math.pow(2, n / 12);
+  return baseFrequency * Math.pow(2, n / 12) * pitchMultiplier;
 }
 
 type Synth = {
@@ -12,8 +13,12 @@ type Synth = {
     gain: GainNode;
     octave: number;
   }[];
+  pitch: number;
   modulator: {
-    osc: OscillatorNode;
+    enabled: boolean;
+    type: "lfo" | "noise";
+    lfo: OscillatorNode;
+    noise: AudioBufferSourceNode;
     gain: GainNode;
   };
   volume: {
@@ -72,8 +77,9 @@ function initializeSynth() {
 
   const modulator = createModulator(
     audioContext,
-    oscillators.map((o) => o.osc),
-    false
+    oscillators.map((o) => o.osc.frequency),
+    false,
+    "lfo"
   );
 
   // Master volume
@@ -99,8 +105,9 @@ function initializeSynth() {
       gainNode: volumeNode,
     },
     oscillators,
+    pitch: 0,
     modulator,
-    noise: createWhiteNoise(audioContext, adsrGainNode),
+    noise: createWhiteNoise(audioContext, [adsrGainNode]),
     lowpass: {
       filterNode: lowpassFilterNode,
     },
@@ -148,36 +155,56 @@ function createOscillator(
   };
 }
 
+function isAudioParam(
+  destination: AudioNode | AudioParam
+): destination is AudioParam {
+  return destination instanceof AudioParam;
+}
+
 function createModulator(
   audioContext: AudioContext,
-  destinations: OscillatorNode[],
-  enabled: boolean
+  destinations: AudioParam[] | AudioNode[],
+  enabled: boolean,
+  type: "lfo" | "noise"
 ) {
-  const oscillator = audioContext.createOscillator();
-  oscillator.type = "sine";
-  oscillator.frequency.value = 5;
+  const lfo = audioContext.createOscillator();
+  lfo.type = "sine";
+  lfo.frequency.value = 5;
+  lfo.start();
+
+  const noise = noiseGenerator(audioContext);
+  noise.start();
 
   const gainNode = audioContext.createGain();
   gainNode.gain.value = 5;
 
-  destinations.forEach((destination) =>
-    gainNode.connect(destination.frequency)
-  );
-
   // OSC -> Gain -> Destination.frequency
   if (enabled) {
-    oscillator.connect(gainNode);
+    if (type === "lfo") {
+      lfo.connect(gainNode);
+    } else {
+      noise.connect(gainNode);
+    }
   }
 
-  oscillator.start();
+  destinations.forEach((destination) => {
+    if (isAudioParam(destination)) {
+      gainNode.connect(destination);
+    } else {
+      gainNode.connect(destination);
+    }
+  });
 
   return {
-    osc: oscillator,
+    enabled,
+    type,
+    lfo,
+    noise,
     gain: gainNode,
   };
 }
 
-function createWhiteNoise(audioContext: AudioContext, destination: AudioNode) {
+function noiseGenerator(audioContext: AudioContext) {
   const bufferSize = audioContext.sampleRate * 2; // 2 seconds of audio
   const buffer = audioContext.createBuffer(
     1,
@@ -194,14 +221,28 @@ function createWhiteNoise(audioContext: AudioContext, destination: AudioNode) {
   noiseGeneratorNode.buffer = buffer;
   noiseGeneratorNode.loop = true;
 
+  return noiseGeneratorNode;
+}
+
+function createWhiteNoise(
+  audioContext: AudioContext,
+  destinations: AudioNode[] | AudioParam[]
+) {
+  const noiseGeneratorNode = noiseGenerator(audioContext);
+
   const gainNode = new GainNode(audioContext);
   gainNode.gain.value = 0.5;
 
   // Noise generator -> Gain -> Destination
   // NOTE: noiseGeneratorNode is disconnected by default
-  gainNode.connect(destination);
+  destinations.forEach((destination) => {
+    if (isAudioParam(destination)) {
+      gainNode.connect(destination);
+    } else {
+      gainNode.connect(destination);
+    }
+  });
 
-  // start playing the noise
   noiseGeneratorNode.start();
 
   return {
@@ -211,7 +252,10 @@ function createWhiteNoise(audioContext: AudioContext, destination: AudioNode) {
   };
 }
 
-function createPinkNoise(audioContext: AudioContext, destination: AudioNode) {
+function createPinkNoise(
+  audioContext: AudioContext,
+  destinations: AudioNode[] | AudioParam[]
+) {
   const bufferSize = audioContext.sampleRate * 2; // 2 seconds of audio
   const noiseBuffer = audioContext.createBuffer(
     1,
@@ -251,7 +295,13 @@ function createPinkNoise(audioContext: AudioContext, destination: AudioNode) {
 
   // Noise generator -> Gain -> Destination
   // NOTE: noiseGeneratorNode is disconnected by default
-  gainNode.connect(destination);
+  destinations.forEach((destination) => {
+    if (isAudioParam(destination)) {
+      gainNode.connect(destination);
+    } else {
+      gainNode.connect(destination);
+    }
+  });
 
   noiseGeneratorNode.start();
 
@@ -283,7 +333,7 @@ function startNote(note: number) {
 
   synth.oscillators.forEach((oscillator) => {
     oscillator.osc.frequency.setValueAtTime(
-      getFrequency(noteToPlay, oscillator.octave),
+      getFrequency(noteToPlay, oscillator.octave, synth.pitch),
       synth.audioContext.currentTime
     );
   });
@@ -307,7 +357,7 @@ function stopNote(note: number) {
     const noteToPlay = highestPlayingNote();
     synth.oscillators.forEach((oscillator) => {
       oscillator.osc.frequency.setValueAtTime(
-        getFrequency(noteToPlay, oscillator.octave),
+        getFrequency(noteToPlay, oscillator.octave, synth.pitch),
         synth.audioContext.currentTime
       );
     });
@@ -389,15 +439,51 @@ function setOscillatorModulationAmount(amount: string) {
 
 function setOscillatorModulationFrq(frequency: string) {
   if (!synth) initializeSynth();
-  synth.modulator.osc.frequency.value = Number(frequency);
+  synth.modulator.lfo.frequency.value = Number(frequency);
 }
 
 function toggleOscillatorModulation(enabled: boolean) {
   if (!synth) initializeSynth();
   if (enabled) {
-    synth.modulator.osc.connect(synth.modulator.gain);
+    if (synth.modulator.type === "lfo") {
+      synth.modulator.lfo.connect(synth.modulator.gain);
+    } else if (synth.modulator.type === "noise") {
+      synth.modulator.noise.connect(synth.modulator.gain);
+    }
   } else {
-    synth.modulator.osc.disconnect();
+    synth.modulator.lfo.disconnect();
+    synth.modulator.noise.disconnect();
+  }
+}
+
+function toggleOscillatorModulationType(isLFO: boolean) {
+  if (!synth) initializeSynth();
+
+  if (isLFO) {
+    synth.modulator.noise.disconnect();
+    synth.modulator.lfo.connect(synth.modulator.gain);
+    synth.modulator.type = "lfo";
+  } else {
+    synth.modulator.lfo.disconnect();
+    synth.modulator.noise.connect(synth.modulator.gain);
+    synth.modulator.type = "noise";
+  }
+}
+
+// Pitch
+
+function setOscillatorPitch(pitch: string) {
+  if (!synth) initializeSynth();
+  synth.pitch = Number(pitch);
+
+  if (synth.playingNotes.size > 0) {
+    const noteToPlay = highestPlayingNote();
+    synth.oscillators.forEach((oscillator) => {
+      oscillator.osc.frequency.setValueAtTime(
+        getFrequency(noteToPlay, oscillator.octave, synth.pitch),
+        synth.audioContext.currentTime
+      );
+    });
   }
 }
 
@@ -427,9 +513,9 @@ function toggleNoiseColor(isWhite: boolean) {
   const volume = synth.noise.gain.gain.value;
 
   if (isWhite) {
-    synth.noise = createWhiteNoise(synth.audioContext, synth.adsr.gainNode);
+    synth.noise = createWhiteNoise(synth.audioContext, [synth.adsr.gainNode]);
   } else {
-    synth.noise = createPinkNoise(synth.audioContext, synth.adsr.gainNode);
+    synth.noise = createPinkNoise(synth.audioContext, [synth.adsr.gainNode]);
   }
 
   synth.noise.enabled = isEnabled;
