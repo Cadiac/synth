@@ -14,6 +14,7 @@ type Synth = {
     octave: number;
   }[];
   pitch: number;
+  glide: number;
   modulator: {
     enabled: boolean;
     type: "lfo" | "noise";
@@ -106,6 +107,7 @@ function initializeSynth() {
     },
     oscillators,
     pitch: 0,
+    glide: 0,
     modulator,
     noise: createWhiteNoise(audioContext, [adsrGainNode]),
     lowpass: {
@@ -332,10 +334,32 @@ function startNote(note: number) {
   );
 
   synth.oscillators.forEach((oscillator) => {
-    oscillator.osc.frequency.setValueAtTime(
-      getFrequency(noteToPlay, oscillator.octave, synth.pitch),
+    const nextFrequency = getFrequency(
+      noteToPlay,
+      oscillator.octave,
+      synth.pitch
+    );
+
+    oscillator.osc.frequency.cancelScheduledValues(
       synth.audioContext.currentTime
     );
+
+    if (synth.glide > 0 && synth.playingNotes.size > 1) {
+      const currentFrequency = oscillator.osc.frequency.value;
+      oscillator.osc.frequency.setValueAtTime(
+        currentFrequency,
+        synth.audioContext.currentTime
+      );
+      oscillator.osc.frequency.linearRampToValueAtTime(
+        nextFrequency,
+        synth.audioContext.currentTime + synth.glide
+      );
+    } else {
+      oscillator.osc.frequency.setValueAtTime(
+        nextFrequency,
+        synth.audioContext.currentTime
+      );
+    }
   });
 
   const attackEnd =
@@ -355,13 +379,31 @@ function stopNote(note: number) {
   synth.playingNotes.delete(note);
   if (synth.playingNotes.size > 0) {
     const noteToPlay = highestPlayingNote();
-    synth.oscillators.forEach((oscillator) => {
-      oscillator.osc.frequency.setValueAtTime(
-        getFrequency(noteToPlay, oscillator.octave, synth.pitch),
-        synth.audioContext.currentTime
-      );
-    });
 
+    synth.oscillators.forEach((oscillator) => {
+      const nextFrequency = getFrequency(
+        noteToPlay,
+        oscillator.octave,
+        synth.pitch
+      );
+
+      if (synth.glide > 0) {
+        const currentFrequency = oscillator.osc.frequency.value;
+        oscillator.osc.frequency.setValueAtTime(
+          currentFrequency,
+          synth.audioContext.currentTime
+        );
+        oscillator.osc.frequency.linearRampToValueAtTime(
+          nextFrequency,
+          synth.audioContext.currentTime + synth.glide
+        );
+      } else {
+        oscillator.osc.frequency.setValueAtTime(
+          nextFrequency,
+          synth.audioContext.currentTime
+        );
+      }
+    });
     return;
   }
 
@@ -485,6 +527,13 @@ function setOscillatorPitch(pitch: string) {
       );
     });
   }
+}
+
+// Glide
+
+function setGlide(glide: string) {
+  if (!synth) initializeSynth();
+  synth.glide = Number(glide);
 }
 
 // Noise generator

@@ -201,6 +201,10 @@ input[type="range" i]::-webkit-slider-thumb {
   align-self: flex-end;
 }
 
+.full-height {
+  height: 100%;
+}
+
 .waveform-input {
   background-size: 31% 100% !important;
   background-position: 5% 0% !important;
