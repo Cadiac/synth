@@ -665,3 +665,31 @@ window.addEventListener("keyup", (event) => {
     stopNote(KEYMAP[key]);
   }
 });
+
+(<any>window).synth = {
+  startNote,
+  stopNote,
+  setMasterVolume,
+  setOscillatorVolume,
+  setOscillatorDetune,
+  setOscillatorWaveform,
+  setOscillatorOctave,
+  toggleOscillator,
+  setOscillatorModulationAmount,
+  setOscillatorModulationFrq,
+  toggleOscillatorModulation,
+  toggleOscillatorModulationType,
+  setOscillatorPitch,
+  setGlide,
+  setNoiseVolume,
+  toggleNoise,
+  toggleNoiseColor,
+  setLowpassFrequency,
+  setLowpassQ,
+  setAdsrAttack,
+  setAdsrDecay,
+  setAdsrSustain,
+  setAdsrRelease,
+  setEchoDelay,
+  setEchoFeedback,
+};
