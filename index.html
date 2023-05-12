@@ -115,7 +115,7 @@
             </div>
             <div class="column">
               <label>DETUNE</label>
-              <input type="range" min="-90" max="90" step="1" value="0" oninput="setOscillatorDetune(this.value, 0)" />
+              <input type="range" min="-90" max="90" step="1" value="0" oninput="window.synth.setOscillatorDetune(this.value, 0)" />
               <div class="space-between">
                 <small class="left">-90 Hz</small>
                 <small class="middle">0</small>
@@ -191,7 +191,7 @@
             </div>
             <div class="column">
               <label>DETUNE</label>
-              <input type="range" min="-90" max="90" step="1" value="0" oninput="setOscillatorDetune(this.value, 2)" />
+              <input type="range" min="-90" max="90" step="1" value="0" oninput="window.synth.setOscillatorDetune(this.value, 2)" />
               <div class="space-between">
                 <small class="left">-90 Hz</small>
                 <small class="middle">0</small>
@@ -258,7 +258,7 @@
 
                   <div class="column">
                     <label>GLIDE</label>
-                    <input type="range" min="0" max="3" step="0.01" value="0" oninput="setGlide(this.value)" />
+                    <input type="range" min="0" max="3" step="0.01" value="0" oninput="window.synth.setGlide(this.value)" />
                     <div class="space-between">
                       <small>0 s</small>
                       <small>3 s</small>
@@ -316,7 +316,7 @@
                 </div>
                 <div class="column justify-flex-end">
                   <label class="switch">
-                    <input type="checkbox" value="enabled" checked onchange="toggleOscillator(this.checked, 0)">
+                    <input type="checkbox" value="enabled" checked onchange="window.synth.toggleOscillator(this.checked, 0)">
                     <span class="slider"></span>
                   </label>
                   <div class="space-between">
@@ -341,7 +341,7 @@
                 </div>
                 <div class="column justify-flex-end">
                   <label class="switch">
-                    <input type="checkbox" value="enabled" onchange="toggleOscillator(this.checked, 1)">
+                    <input type="checkbox" value="enabled" onchange="window.synth.toggleOscillator(this.checked, 1)">
                     <span class="slider"></span>
                   </label>
                   <div class="space-between">
@@ -366,7 +366,7 @@
                 </div>
                 <div class="column justify-flex-end">
                   <label class="switch">
-                    <input type="checkbox" value="enabled" onchange="toggleOscillator(this.checked, 2)">
+                    <input type="checkbox" value="enabled" onchange="window.synth.toggleOscillator(this.checked, 2)">
                     <span class="slider"></span>
                   </label>
                   <div class="space-between">
@@ -384,7 +384,7 @@
               <div id="mixer-3" class="row">
                 <div class="column justify-flex-end">
                   <label class="switch">
-                    <input type="checkbox" value="enabled" disabled onchange="toggleExternal(this.checked)">
+                    <input type="checkbox" value="enabled" disabled onchange="window.synth.toggleExternal(this.checked)">
                     <span class="slider"></span>
                   </label>
                   <div class="space-between">
@@ -409,7 +409,7 @@
               <div id="mixer-3" class="row">
                 <div class="column centered">
                   <label class="switch">
-                    <input type="checkbox" value="enabled" onchange="toggleNoise(this.checked)">
+                    <input type="checkbox" value="enabled" onchange="window.synth.toggleNoise(this.checked)">
                     <span class="slider"></span>
                   </label>
                   <div class="space-between">
@@ -420,7 +420,7 @@
 
                 <div class="column">
                   <label>VOLUME</label>
-                  <input type="range" min="0" max="1" step="0.01" value="0.5" oninput="setNoiseVolume(this.value)" />
+                  <input type="range" min="0" max="1" step="0.01" value="0.5" oninput="window.synth.setNoiseVolume(this.value)" />
                   <div class="space-between">
                     <small>0</small>
                     <small>10</small>
@@ -429,7 +429,7 @@
                   <small>PINK</small>
                   <div class="centered">
                     <label class="switch-vertical">
-                      <input type="checkbox" value="enabled" checked onchange="toggleNoiseColor(this.checked)">
+                      <input type="checkbox" value="enabled" checked onchange="window.synth.toggleNoiseColor(this.checked)">
                       <span class="slider slider-vertical"></span>
                     </label>
                   </div>
